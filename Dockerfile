@@ -1,0 +1,10 @@
+# Yeah there are smaller containers but eh, I know this one
+# and am not a fan of pulling gcc from Docker Hub.
+FROM registry.svc.ci.openshift.org/coreos/cosa-buildroot as builder
+WORKDIR /srv
+COPY cve-cap-net-raw.c .
+RUN gcc -Wall -o cve-cap-net-raw cve-cap-net-raw.c
+FROM registry.fedoraproject.org/fedora:32 as builder
+COPY --from=builder /srv/cve-cap-net-raw /usr/bin
+RUN chmod u+s /usr/bin/cve-cap-net-raw
+
